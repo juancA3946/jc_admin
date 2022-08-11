@@ -50,13 +50,18 @@ if Setting.KillPLayer then
                     local name = GetPlayerName(source)
                     local playerPing = GetPlayerPing(source)
                       local xTarget = ESX.GetPlayerFromId(targetId)
-                      if xTarget then
-                        TriggerClientEvent('ASFadgASDGsdgbSDGsdgSDGsdgSDGBSdbasddfvbASDG: : : : :', source)
-                        TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 Has sido ejecutado por un administrador ^3[^1'..GetPlayerName(source)..'^3]^0'))
-                        TriggerEvent('jc_logs:funcionlog', '👁 Logs Administración 👁', '**\nAdmnistrador: **'..tostring(name)..'**\nID: **'..tostring(targetId)..'**\nJugador: **'..tostring(GetPlayerName(targetId))..'**\nPing Player: **'..tostring(playerPing)..'\n**Acción Realizada:** Kill Player', 255243)
-                      else
-                        TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0El jugador no está online'))
-                      end
+                      local xPlayer = ESX.GetPlayerFromId(source)
+                      if Superior(xPlayer) then
+                        if xTarget then
+                            TriggerClientEvent('ASFadgASDGsdgbSDGsdgSDGsdgSDGBSdbasddfvbASDG: : : : :', source)
+                            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 Has sido ejecutado por un administrador ^3[^1'..GetPlayerName(source)..'^3]^0'))
+                            TriggerEvent('jc_logs:funcionlog', '👁 Logs Administración 👁', '**\nAdmnistrador: **'..tostring(name)..'**\nID: **'..tostring(targetId)..'**\nJugador: **'..tostring(GetPlayerName(targetId))..'**\nPing Player: **'..tostring(playerPing)..'\n**Acción Realizada:** Kill Player', 255243)
+                          else
+                            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0El jugador no está online'))
+                        end
+                    else
+                        TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+                     end
                 else
                       TriggerClientEvent('chatMessage', source, ('Error en el sistema'))
                 end
