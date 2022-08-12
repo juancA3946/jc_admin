@@ -5,6 +5,7 @@ TriggerEvent('esx:getSharedObject', function(obj)
 end)
 
 local muerto = {}
+local administrando = false
 
 
 if Setting.LogConsola then 
@@ -44,14 +45,15 @@ end
 
 if Setting.KillPLayer then
     RegisterCommand('killplayer', function(source, args)	
-        if source ~= 0 then
+        if administrando then 
+            if source ~= 0 then
                 if args[1] and tonumber(args[1]) then
                     local targetId = tonumber(args[1])
                     local name = GetPlayerName(source)
                     local playerPing = GetPlayerPing(source)
                       local xTarget = ESX.GetPlayerFromId(targetId)
                       local xPlayer = ESX.GetPlayerFromId(source)
-                      if Superior(xPlayer) then
+                      if SoyAdmin(xPlayer) then
                         if xTarget then
                             TriggerClientEvent('ASFadgASDGsdgbSDGsdgSDGsdgSDGBSdbasddfvbASDG: : : : :', source)
                             TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 Has sido ejecutado por un administrador ^3[^1'..GetPlayerName(source)..'^3]^0'))
@@ -65,57 +67,72 @@ if Setting.KillPLayer then
                 else
                       TriggerClientEvent('chatMessage', source, ('Error en el sistema'))
                 end
+            end
+        else
+            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No estas administrando para utilizar comandos de admin'))
         end
     end)
 end
 
 if Setting.ALPlayers then 
     RegisterCommand('reviveall', function(source, args)	
-        canRevive = false
-        local name = GetPlayerName(source)
-        if source == 0 then
-            canRevive = true
-        else
-            local xPlayer = ESX.GetPlayerFromId(source)
-            if Superior(xPlayer) then
+        if administrando then 
+            canRevive = false
+            local name = GetPlayerName(source)
+            if source == 0 then
                 canRevive = true
-                local playerPing = GetPlayerPing(source)
-                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 Has revivido a todo el servidor'))
-                TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Superior 👁', '**\nAdmnistrador: **'..tostring(name)..'**\nID: **'..tostring(source)..'**\nPlayer Ping: **'..tostring(playerPing)..'\n**Acción Realizada:** Revive ALL Payers', 23543)
             else
-                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+                local xPlayer = ESX.GetPlayerFromId(source)
+                if Superior(xPlayer) then
+                    canRevive = true
+                    local playerPing = GetPlayerPing(source)
+                    TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 Has revivido a todo el servidor'))
+                    TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Superior 👁', '**\nAdmnistrador: **'..tostring(name)..'**\nID: **'..tostring(source)..'**\nPlayer Ping: **'..tostring(playerPing)..'\n**Acción Realizada:** Revive ALL Payers', 23543)
+                else
+                    TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+                end
             end
-        end
-        if canRevive then
-            for i,data in pairs(muerto) do
-                TriggerClientEvent('esx_ambulancejob:revive', i)
+            if canRevive then
+                for i,data in pairs(muerto) do
+                    TriggerClientEvent('esx_ambulancejob:revive', i)
+                end
             end
+        else
+            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No estas administrando para utilizar comandos de admin'))
         end
     end)
     
     RegisterCommand('dvall',function(source, args)
-        local xPlayer = ESX.GetPlayerFromId(source)
-        local name = GetPlayerName(source)
-        if Superior(xPlayer) then
-            TriggerClientEvent('jc_admin:eliminarveh', -1)
-            TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Superior 👁', '**\nAdmnistrador: **'..tostring(name)..'**\nID: **'..tostring(source)..'\n**Acción Realizada:** Dv ALL', 23543)
+        if administrando then 
+            local xPlayer = ESX.GetPlayerFromId(source)
+            local name = GetPlayerName(source)
+            if Superior(xPlayer) then
+                TriggerClientEvent('jc_admin:eliminarveh', -1)
+                TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Superior 👁', '**\nAdmnistrador: **'..tostring(name)..'**\nID: **'..tostring(source)..'\n**Acción Realizada:** Dv ALL', 23543)
+            else
+                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+            end
         else
-            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No estas administrando para utilizar comandos de admin'))
         end
     end)
 
     RegisterCommand('bringall',function(source, args)
-        local xPlayer = ESX.GetPlayerFromId(source)
-        local name = GetPlayerName(source)
-        if Superior(xPlayer) then
-            local coords = GetEntityCoords(GetPlayerPed(source))
-            for _, playerId in ipairs(GetPlayers()) do
-                SetEntityCoords(GetPlayerPed(playerId), coords.x, coords.y, coords.z + 0.5)
-                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 Has traido a todo el servidor'))
-                TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Superior 👁', '**\nAdmnistrador: **'..tostring(name)..'**\nID: **'..tostring(source)..'\n**Acción Realizada:** Bring ALL Players', 23543)
+        if administrando then 
+            local xPlayer = ESX.GetPlayerFromId(source)
+            local name = GetPlayerName(source)
+            if Superior(xPlayer) then
+                local coords = GetEntityCoords(GetPlayerPed(source))
+                for _, playerId in ipairs(GetPlayers()) do
+                    SetEntityCoords(GetPlayerPed(playerId), coords.x, coords.y, coords.z + 0.5)
+                    TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 Has traido a todo el servidor'))
+                    TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Superior 👁', '**\nAdmnistrador: **'..tostring(name)..'**\nID: **'..tostring(source)..'\n**Acción Realizada:** Bring ALL Players', 23543)
+                end
+            else
+                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
             end
         else
-            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No estas administrando para utilizar comandos de admin'))
         end
     end)
 end
@@ -144,59 +161,96 @@ end
 
 if Setting.Basic then 
     RegisterCommand('goto',function(source, args)
-        local xPlayer = ESX.GetPlayerFromId(source)
-        if SoyAdmin(xPlayer) and args[1] then
-            if GetPlayerName(args[1]) then
-                local playerId = args[1]
-                local coords = GetEntityCoords(GetPlayerPed(playerId))
-                SetEntityCoords(GetPlayerPed(source), coords.x, coords.y, coords.z + 0.5)
+        if administrando then 
+            local xPlayer = ESX.GetPlayerFromId(source)
+            if SoyAdmin(xPlayer) and args[1] then
+                if GetPlayerName(args[1]) then
+                    local playerId = args[1]
+                    local coords = GetEntityCoords(GetPlayerPed(playerId))
+                    SetEntityCoords(GetPlayerPed(source), coords.x, coords.y, coords.z + 0.5)
+                else
+                    TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 ID Incorrecta'))
+                end
+            else
+                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
             end
+        else
+            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No estas administrando para utilizar comandos de admin'))
         end
     end)
     RegisterCommand('bring',function(source, args)
-        local xPlayer = ESX.GetPlayerFromId(source)
-        if SoyAdmin(xPlayer) and args[1] then
-            if GetPlayerName(args[1]) then
-                local playerId = args[1]
-                local coords = GetEntityCoords(GetPlayerPed(source))
-                SetEntityCoords(GetPlayerPed(playerId), coords.x, coords.y, coords.z + 0.5)
+        if administrando then 
+            local xPlayer = ESX.GetPlayerFromId(source)
+            if SoyAdmin(xPlayer) and args[1] then
+                if GetPlayerName(args[1]) then
+                    local playerId = args[1]
+                    local coords = GetEntityCoords(GetPlayerPed(source))
+                    SetEntityCoords(GetPlayerPed(playerId), coords.x, coords.y, coords.z + 0.5)
+                else
+                    TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 ID Incorrecta'))
+                end
+            else
+                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
             end
+        else
+            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No estas administrando para utilizar comandos de admin'))
+        end
+    end)
+    RegisterCommand('fix',function(source, args)
+        if administrando then 
+            local xPlayer = ESX.GetPlayerFromId(source)
+            if SoyAdmin(xPlayer) then
+                TriggerClientEvent('jc_admin:repararveh', source)
+                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 Has reparado el vehiculo'))
+            else
+                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+            end
+        else
+            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No estas administrando para utilizar comandos de admin'))
         end
     end)
     RegisterCommand('announce', function(source, args, rawCommand)
-        if source ~= 0 then
-            local xPlayer = ESX.GetPlayerFromId(source)
-            if args[1] then
-                local message = string.sub(rawCommand, 10)
-                local playerPing = GetPlayerPing(source)
-                if xPlayer then
-                    if SoyAdmin(xPlayer) then
-                        TriggerClientEvent('chatMessage', source, ('^6[^1Anuncio Administrativo^6] ^6||^0 ' ..message))
-                        TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Announce 👁', '**\nAdministrador: **'..tostring(admin)..'\n**ID**: '..tostring(args[1])..'\n**Player Ping**: '..tostring(playerPing)..'**\nChat: **'..tostring(message), 255)
-                    else
-                        TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+        if administrando then 
+            if source ~= 0 then
+                local xPlayer = ESX.GetPlayerFromId(source)
+                if args[1] then
+                    local message = string.sub(rawCommand, 10)
+                    local playerPing = GetPlayerPing(source)
+                    if xPlayer then
+                        if SoyAdmin(xPlayer) then
+                            TriggerClientEvent('chatMessage', source, ('^6[^1Anuncio Administrativo^6] ^6||^0 ' ..message))
+                            TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Announce 👁', '**\nAdministrador: **'..tostring(admin)..'\n**ID**: '..tostring(args[1])..'\n**Player Ping**: '..tostring(playerPing)..'**\nChat: **'..tostring(message), 255)
+                        else
+                            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+                        end
                     end
-                end
-            else
-                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 Error en el sistema'))
-             end
+                else
+                    TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 Error en el sistema'))
+                 end
+            end
+        else
+            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No estas administrando para utilizar comandos de admin'))
         end
     end)
     RegisterCommand('kick',function(source, args, rawCommand)
-        local xPlayer = ESX.GetPlayerFromId(source)
-        if SoyAdmin(xPlayer) and args[1] and args[2] then
-            if GetPlayerName(args[1]) then
-                local playerId = args[1]
-                local playerName = GetPlayerName(args[1])
-                local reason = string.gsub(rawCommand, 'kick '..args[1]..' ', '')
-                local admin = GetPlayerName(source)
-                TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Kick 👁', '**\nAdministrador: **'..tostring(admin)..'\n**Jugador**: '..tostring(playerName)..'**\nRazon del Kick: **'..tostring(reason), 255)
-                DropPlayer(playerId, reason)
+        if administrando then 
+            local xPlayer = ESX.GetPlayerFromId(source)
+            if SoyAdmin(xPlayer) and args[1] and args[2] then
+                if GetPlayerName(args[1]) then
+                    local playerId = args[1]
+                    local playerName = GetPlayerName(args[1])
+                    local reason = string.gsub(rawCommand, 'kick '..args[1]..' ', '')
+                    local admin = GetPlayerName(source)
+                    TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Kick 👁', '**\nAdministrador: **'..tostring(admin)..'\n**Jugador**: '..tostring(playerName)..'**\nRazon del Kick: **'..tostring(reason), 255)
+                    DropPlayer(playerId, reason)
+                else
+                    TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 ID del jugador no correcta'))
+                end
             else
-                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 ID del jugador no correcta'))
+               -- TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
             end
         else
-            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No estas administrando para utilizar comandos de admin'))
         end
     end)
 end
@@ -209,9 +263,11 @@ if Setting.Reportes then
         local playerName = GetPlayerName(source)
         for _, playerId in ipairs(GetPlayers()) do
             local xPlayer = ESX.GetPlayerFromId(source)
-            if SoyAdmin(xPlayer) and args[1] then
-                TriggerClientEvent('chat:addMessage', playerId, { args = { '^3[^1Reportes^3] ^3[^1ID^3] ^1'..source..' ^4| ^3[^6Nombre: ^1'..playerName..'^3] ^4| ^0', reason } })
-                TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Reportes 👁', '**\nUsuario: **'..tostring(playerName)..'\n**ID**: '..tostring(source)..'**\nRazon del reporte: **'..tostring(reason), 255)
+            if administrando then 
+                if SoyAdmin(xPlayer) and args[1] then
+                    TriggerClientEvent('chat:addMessage', playerId, { args = { '^3[^1Reportes^3] ^3[^1ID^3] ^1'..source..' ^4| ^3[^6Nombre: ^1'..playerName..'^3] ^4| ^0', reason } })
+                    TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Reportes 👁', '**\nUsuario: **'..tostring(playerName)..'\n**ID**: '..tostring(source)..'**\nRazon del reporte: **'..tostring(reason), 255)
+                end
             end
         end
         TriggerClientEvent('chat:addMessage', source, { args = { '^3[^1Reporte^3]', 'Reporte enviado, espere a ser atendido...' } })
@@ -222,25 +278,50 @@ end
 
 if Setting.Spectateplayer then 
     RegisterCommand('spectear',function(source, args)
-        local xPlayer = ESX.GetPlayerFromId(source)
-        if SoyAdmin(xPlayer) and args[1] then
-            if GetPlayerName(args[1]) then
-                local playerId = args[1]
-                local playerName = GetPlayerName(args[1])
-                local admin = GetPlayerName(source)
-                local coords = GetEntityCoords(GetPlayerPed(playerId))
-                if coords.x ~= 0 and coords.y ~= 0 and coords.z ~= 0 then
-                    TriggerClientEvent('jc_admin:specteando', source, coords, playerId)
-                    TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Especteando 👁', '**\nAdmnistrador: **'..tostring(admin)..'**\nID del Administrador: **'..tostring(source)..'\n**Jugador**: '..tostring(playerName)..'\n**ID**: '..tostring(args[1]), 255)
+        if administrando then 
+            local xPlayer = ESX.GetPlayerFromId(source)
+            if SoyAdmin(xPlayer) and args[1] then
+                if GetPlayerName(args[1]) then
+                    local playerId = args[1]
+                    local playerName = GetPlayerName(args[1])
+                    local admin = GetPlayerName(source)
+                    local coords = GetEntityCoords(GetPlayerPed(playerId))
+                    if coords.x ~= 0 and coords.y ~= 0 and coords.z ~= 0 then
+                        TriggerClientEvent('jc_admin:specteando', source, coords, playerId)
+                        TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Especteando 👁', '**\nAdmnistrador: **'..tostring(admin)..'**\nID del Administrador: **'..tostring(source)..'\n**Jugador**: '..tostring(playerName)..'\n**ID**: '..tostring(args[1]), 255)
+                    end
+                else
+                    TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0ID del jugador no valida'))
                 end
             else
-                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0ID del jugador no valida'))
+                TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
             end
         else
-            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+            TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No estas administrando para utilizar comandos de admin'))
         end
     end)
 end
+
+RegisterCommand('administrar',function(source, args)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if SoyAdmin(xPlayer) then
+        TriggerClientEvent('jc_admin:adminstracion:entrar', source)
+        administrando = true
+    else
+        TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+    end
+end)
+
+RegisterCommand('enviarclock',function(source, args)
+    local xPlayer = ESX.GetPlayerFromId(source)
+    if SoyAdmin(xPlayer) then
+        TriggerClientEvent('jc_admin:adminstracion:contar', source)
+        administrando = false
+    else
+        TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
+    end
+end)
+
 
 -- Logs 
 
@@ -277,6 +358,22 @@ local connect = {
   PerformHttpRequest(Setting.LogsAvanzados, function(err, text, headers) end, 'POST', json.encode({username = nombre, embeds = connect, avatar_url = imagen}), { ['Content-Type'] = 'application/json' })
 end)
 
+RegisterServerEvent('jc_logs:clocktime')
+AddEventHandler('jc_logs:clocktime', function(name, message, color)
+local connect = {
+        {
+            ['color'] = color,
+            ['title'] = '**'.. name ..'**',
+                        ['description'] = message,
+            ['footer'] = {
+                                ['text'] = 'Administración Clock || '..os.date('%c')..' ',
+            },
+        }
+    }
+  PerformHttpRequest(Setting.Clock, function(err, text, headers) end, 'POST', json.encode({username = nombre, embeds = connect, avatar_url = imagen}), { ['Content-Type'] = 'application/json' })
+end)
+
+
 RegisterServerEvent('jc_logs:conex')
 AddEventHandler('jc_logs:conex', function(name, message, color)
 local connect = {
@@ -312,6 +409,14 @@ AddEventHandler('jc_logs:log:client', function(reason)
                 local name = GetPlayerName(source)
                 local scr = source
                 TriggerEvent('jc_logs:funcionlog', '👁 Logs Administración 👁', '**\nAdmnistrador: **'..tostring(name)..'**\nID: **'..tostring(scr)..'\n'..tostring(reason), 255)
+end)
+
+RegisterNetEvent('jc_logs:log:client:administrando')
+AddEventHandler('jc_logs:log:client:administrando', function(reason)
+                local name = GetPlayerName(source)
+                local ping = GetPlayerPing(source)
+                local scr = source
+                TriggerEvent('jc_logs:clocktime', '🎫 Logs Administración Clock 🎫', '**\nAdmnistrador: **'..tostring(name)..'**\nID: **'..tostring(scr)..'**\nPing: **'..tostring(ping)..'\n'..tostring(reason), 255)
 end)
 
 -- Conex Deconex
