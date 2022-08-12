@@ -7,41 +7,53 @@ Citizen.CreateThread(function ()
 	end
 end)
 
-TriggerEvent('chat:addSuggestion', '/'..'report', 'Informa de cualquier problema a la admnistración')
+local administrando = false 
+
+TriggerEvent('chat:addSuggestion', '/'..'report', 'Informa de cualquier problema a la admnistración', {{ name='Descripción del reporte'}})
 TriggerEvent('chat:addSuggestion', '/'..'a', 'Admin chat')
 TriggerEvent('chat:addSuggestion', '/'..'kick', 'Kickear Jugador', {{ name='player', help='player id' }, { name='reason', help='kick reason' }})
 TriggerEvent('chat:addSuggestion', '/'..'killplayer', 'Matar a un Jugador', {{ name='ID'}})
 TriggerEvent('chat:addSuggestion', '/'..'bringall', 'Traer a todo el servidor a tu posición')
 TriggerEvent('chat:addSuggestion', '/'..'reviveall', 'Revivir a todo el servidor')
 TriggerEvent('chat:addSuggestion', '/'..'dvall', 'Eliminar vehiculos en todo el servidor')
+TriggerEvent('chat:addSuggestion', '/'..'administrar', 'Entrar ha administrar y contar el tiempo administrado')
+TriggerEvent('chat:addSuggestion', '/'..'enviarclock', 'Dejar de administrar y enviar el tiempo administrado')
+
+
+
+print 'Admin by juancA#3946'
 
 
 -- TPM
 
 if Setting.Basic then 
     RegisterNetEvent('jc_admin:tpmtopoint', function()
-        local WaypointHandle = GetFirstBlipInfoId(8)
-        if DoesBlipExist(WaypointHandle) then
-            local waypointCoords = GetBlipInfoIdCoord(WaypointHandle)
-    
-            for height = 1, 1000 do
-                SetPedCoordsKeepVehicle(PlayerPedId(), waypointCoords['x'], waypointCoords['y'], height + 0.0)
-    
-                local foundGround, zPos = GetGroundZFor_3dCoord(waypointCoords['x'], waypointCoords['y'], height + 0.0)
-    
-                if foundGround then
-                    SetPedCoordsKeepVehicle(PlayerPedId(), waypointCoords['x'], waypointCoords['y'], height + 0.0)
-    
-                    break
-                end
-    
-                Citizen.Wait(5)
-            end
-            TriggerEvent('chatMessage', ('^4[^1'..Setting.ServerName..'^4] || ^0 Has sido teletransportado.'))
-            TriggerServerEvent('jc_logs:log:client', '**Acción realizada**: TPM')
-        else
-            TriggerEvent('chatMessage', ('^4[^1'..Setting.ServerName..'^4] || ^0 Marque una opcion en su mapa para poder hacer el TPM'))
-        end
+		if administrando then 
+			local WaypointHandle = GetFirstBlipInfoId(8)
+			if DoesBlipExist(WaypointHandle) then
+				local waypointCoords = GetBlipInfoIdCoord(WaypointHandle)
+		
+				for height = 1, 1000 do
+					SetPedCoordsKeepVehicle(PlayerPedId(), waypointCoords['x'], waypointCoords['y'], height + 0.0)
+		
+					local foundGround, zPos = GetGroundZFor_3dCoord(waypointCoords['x'], waypointCoords['y'], height + 0.0)
+		
+					if foundGround then
+						SetPedCoordsKeepVehicle(PlayerPedId(), waypointCoords['x'], waypointCoords['y'], height + 0.0)
+		
+						break
+					end
+		
+					Citizen.Wait(5)
+				end
+				TriggerEvent('chatMessage', ('^4[^1'..Setting.ServerName..'^4] || ^0 Has sido teletransportado.'))
+				TriggerServerEvent('jc_logs:log:client', '**Acción realizada**: TPM')
+			else
+				TriggerEvent('chatMessage', ('^4[^1'..Setting.ServerName..'^4] || ^0 Marque una opcion en su mapa para poder hacer el TPM'))
+			end
+		else
+			TriggerEvent('chatMessage', ('^4[^1'..Setting.ServerName..'^4] || ^0No estas administrando para utilizar comandos de admin'))
+		end
     end)
     
     TPM = function()
@@ -136,27 +148,27 @@ if Setting.Noclip then
 			SetEntityVisible(PlayerPedId(), 0, 0)
 			SetEntityVisible(k, 0, 0)
 			SetEntityVelocity(k, 0.0001, 0.0001, 0.0001)
-			if IsDisabledControlJustPressed(0, 21) then -- Change speed
+			if IsDisabledControlJustPressed(0, 21) then 
 				oldSpeed = NoclipSpeed
 				NoclipSpeed = NoclipSpeed * 6
 			end
-			if IsDisabledControlJustReleased(0, 21) then -- Restore speed
+			if IsDisabledControlJustReleased(0, 21) then 
 				NoclipSpeed = oldSpeed
 			end
-			if IsDisabledControlPressed(0, 32) then -- MOVE FORWARD
+			if IsDisabledControlPressed(0, 32) then 
 				x = x + NoclipSpeed * dx
 				y = y + NoclipSpeed * dy
 				z = z + NoclipSpeed * dz
 			end
-			if IsDisabledControlPressed(0, 269) then -- MOVE BACK
+			if IsDisabledControlPressed(0, 269) then 
 				x = x - NoclipSpeed * dx
 				y = y - NoclipSpeed * dy
 				z = z - NoclipSpeed * dz
 			end
-			if IsDisabledControlPressed(0, 22) then -- MOVE UP
+			if IsDisabledControlPressed(0, 22) then 
 				z = z + NoclipSpeed
 			end
-			if IsDisabledControlPressed(0, 36) then -- MOVE DOWN
+			if IsDisabledControlPressed(0, 36) then 
 				z = z - NoclipSpeed
 			end
 			SetEntityCoordsNoOffset(k, x, y, z, true, true, true)
@@ -189,7 +201,11 @@ if Setting.Noclip then
     end
 
 	RegisterCommand('noclip', function()
-		NOCLIP()
+		if administrando then 
+			NOCLIP()
+		else
+			TriggerEvent('chatMessage', ('^4[^1'..Setting.ServerName..'^4] || ^0No estas administrando para utilizar comandos de admin'))
+		end
     end)
 end
 
@@ -199,7 +215,6 @@ if Setting.KillPLayer then
 		SetEntityHealth(PlayerPedId(), 0)
 	end)
 end
-
 
 if Setting.ALPlayers then 
 	RegisterNetEvent('jc_admin:eliminarveh', function()
@@ -289,4 +304,58 @@ if Setting.Spectateplayer then
 	TriggerEvent('chat:addSuggestion', '/'..'spectear', 'espectear a un jugador', {{ name='ID', help='Spectea a un jugador' }})
 end
 
-print 'Admin by juancA#3946'
+local contminutos = 0
+local conthoras = 0
+
+Citizen.CreateThread(function()
+	while true do
+		Citizen.Wait(1000 * 60)
+	if administrando then
+		contminutos = contminutos + 1
+		
+		if contminutos == 60 then
+			contminutos = 0
+			conthoras = conthoras + 1
+		end
+	else 
+		contminutos = 0 
+		conthoras = 0
+	end
+	end
+end)
+
+RegisterNetEvent('jc_admin:adminstracion:entrar', function()
+	administrando = true
+--	print 'tu putamdre'
+	TriggerEvent('chatMessage', ('^4[^1'..Setting.ServerName..'^4] || ^0Has entrado ha administrar, /enviarclock cuando termines de administrar y enviaras un registro del tiempo administrado, recuerda estar al menos 2 minutos administrando para enviar el registro.'))
+	TriggerServerEvent('jc_logs:log:client:administrando', '**Ha activado el clock contando tiempo de admnistración**')
+end)
+
+
+RegisterNetEvent('jc_admin:adminstracion:contar', function()
+	if administrando then 
+		if conthoras == 0 and contminutos <= 1 then -- 1 min
+			TriggerEvent('chatMessage', ('^4[^1'..Setting.ServerName..'^4] || ^0Tienes que estar al menos 2 minutos administrando para poder enviar el registro.'))
+		else
+			TriggerEvent('chatMessage', ('^4[^1'..Setting.ServerName..'^4] || ^0Has enviado un registro del tiempo administrado.'))
+			TriggerEvent('chatMessage', ('^4[^1'..Setting.ServerName..'^4] || ^2[^0Horas^2]:^0 '..conthoras..' ^2[^0Minutos^2]^0: ' ..contminutos))
+			TriggerServerEvent('jc_logs:log:client:administrando', '**Horas**: '..conthoras..'\n**Minutos**: ' ..contminutos)
+			conthoras = 0 
+			contminutos = 0
+		end 
+	else
+		TriggerEvent('chatMessage', ('^4[^1'..Setting.ServerName..'^4] || ^0No estas adminstrando para enviar un registro.'))
+	end
+	administrando = false
+end)
+
+
+RegisterNetEvent('jc_admin:repararveh', function()
+	local veh = GetVehiclePedIsIn(PlayerPedId(), false)
+	SetVehicleFixed(GetVehiclePedIsIn(PlayerPedId(), false))
+	SetVehicleDirtLevel(GetVehiclePedIsIn(PlayerPedId(), false), 0.0)
+	SetVehicleLights(GetVehiclePedIsIn(PlayerPedId(), false), 0)
+	SetVehicleBurnout(GetVehiclePedIsIn(PlayerPedId(), false), false)
+	Citizen.InvokeNative(0x1FD09E7390A74D54, GetVehiclePedIsIn(PlayerPedId(), false), 0)
+	SetVehicleUndriveable(veh, false)
+end)
