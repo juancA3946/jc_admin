@@ -1,6 +1,6 @@
 Setting = {}
 
-Setting.ServerName = 'Pepito RP'
+Setting.ServerName = 'Nombre de tu server'
 
 -- Logs Disc
 
@@ -8,6 +8,7 @@ Setting.LogsBasicos = '' -- Logs de administradores, noclip, tpm etc.
 Setting.LogsAvanzados = '' -- Logs de administradores, bringall, reviveall, reportes, chat de staff, etc.
 Setting.LogsEntradas = '' -- Logs Entradas
 Setting.LogsSalidas = '' -- Logs Salidas
+Setting.Clock = '' -- En este canal mostrá el tiempo que lleva el staff administrando cuando entra de servicio /administrar entras de servicio, /enviarclock paras de administrar y envias al discord el tiempo administrado
 
 --
 Setting.ImagenBot = 'https://media.discordapp.net/attachments/932621511020400670/1001982235685163029/unknown.png'
