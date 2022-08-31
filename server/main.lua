@@ -218,7 +218,7 @@ if Setting.Basic then
                     local playerPing = GetPlayerPing(source)
                     if xPlayer then
                         if SoyAdmin(xPlayer) then
-                            TriggerClientEvent('chatMessage', source, ('^6[^1Anuncio Administrativo^6] ^6||^0 ' ..message))
+                            TriggerClientEvent('chatMessage', -1, ('^6[^1Anuncio Administrativo^6] ^6||^0 ' ..message))
                             TriggerEvent('jc_logs:funcionlogavanzado', '👁 Logs Administración Announce 👁', '**\nAdministrador: **'..tostring(admin)..'\n**ID**: '..tostring(args[1])..'\n**Player Ping**: '..tostring(playerPing)..'**\nChat: **'..tostring(message), 255)
                         else
                             TriggerClientEvent('chatMessage', source, ('^4[^1'..Setting.ServerName..'^4] || ^0 No tienes suficientes permisos para acceder al comando'))
